@@ -1,0 +1,96 @@
+.app-layout {
+  display: flex;
+  min-height: 100svh;
+}
+
+.app-sidebar {
+  width: 15rem;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  padding: 1.25rem;
+  border-right: 1px solid var(--border);
+  background: var(--card);
+}
+
+.app-sidebar__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  padding: 0 0.5rem;
+}
+
+.app-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.app-sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.7rem;
+  border-radius: var(--radius-md);
+  font-size: 0.9rem;
+  color: var(--muted-foreground);
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.app-sidebar__link:hover {
+  background: var(--secondary);
+  color: var(--foreground);
+}
+
+.app-sidebar__link--active {
+  background: var(--accent);
+  color: var(--accent-foreground);
+}
+
+.app-content {
+  flex: 1;
+  min-width: 0;
+  padding: 1.75rem 2rem 3rem;
+}
+
+.app-content__header {
+  margin-bottom: 1.75rem;
+}
+
+.app-content__title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.app-content__subtitle {
+  color: var(--muted-foreground);
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .app-sidebar {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .app-sidebar__nav {
+    flex-direction: row;
+  }
+
+  .app-content {
+    padding: 1.25rem;
+  }
+}

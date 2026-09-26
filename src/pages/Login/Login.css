@@ -1,0 +1,62 @@
+.auth-page {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.auth-page__glow {
+  position: absolute;
+  inset: -10% -20% auto -20%;
+  height: 26rem;
+  background: radial-gradient(
+    ellipse 50% 50% at 50% 0%,
+    color-mix(in oklab, var(--primary) 30%, transparent),
+    transparent 70%
+  );
+  filter: blur(40px);
+  z-index: -1;
+}
+
+.auth-card-wrapper {
+  width: 100%;
+  max-width: 24rem;
+}
+
+.auth-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.auth-footer-text {
+  margin-top: 1.25rem;
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--muted-foreground);
+}
+
+.auth-footer-text a {
+  color: var(--primary);
+  font-weight: 500;
+}

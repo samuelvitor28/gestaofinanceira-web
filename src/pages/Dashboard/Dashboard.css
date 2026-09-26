@@ -1,0 +1,106 @@
+.dashboard-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.dashboard-summary-card__value {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--foreground);
+}
+
+.dashboard-summary-card__icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-md);
+}
+
+.dashboard-summary-card__icon--positive {
+  background: color-mix(in oklab, var(--chart-4) 20%, transparent);
+  color: var(--chart-4);
+}
+
+.dashboard-summary-card__icon--negative {
+  background: color-mix(in oklab, var(--destructive) 18%, transparent);
+  color: var(--destructive);
+}
+
+.dashboard-summary-card__icon--neutral {
+  background: color-mix(in oklab, var(--primary) 18%, transparent);
+  color: var(--primary);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1.25rem;
+}
+
+@media (max-width: 900px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.dashboard-category-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 1rem;
+}
+
+.dashboard-category-row:last-child {
+  margin-bottom: 0;
+}
+
+.dashboard-category-row__labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--foreground);
+}
+
+.dashboard-category-row__value {
+  color: var(--muted-foreground);
+}
+
+.dashboard-progress-track {
+  height: 0.4rem;
+  border-radius: 999px;
+  background: var(--secondary);
+  overflow: hidden;
+}
+
+.dashboard-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.dashboard-evolution-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 10rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-lg);
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  text-align: center;
+  padding: 1.5rem;
+}
+
+.dashboard-value--positive {
+  color: var(--chart-4);
+}
+
+.dashboard-value--negative {
+  color: var(--destructive);
+}
