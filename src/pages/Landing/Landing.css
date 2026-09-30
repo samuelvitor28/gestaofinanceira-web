@@ -1,36 +1,11 @@
 .landing-page {
   display: flex;
   flex-direction: column;
-  min-height: 100svh;
 }
 
-.landing-header {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border);
-  background: color-mix(in oklab, var(--background) 85%, transparent);
-  backdrop-filter: blur(8px);
-}
-
-.landing-header__brand {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  color: var(--foreground);
-}
-
-.landing-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-}
-
+/* ============================================================
+   Hero
+   ============================================================ */
 .landing-hero {
   position: relative;
   overflow: hidden;
@@ -45,7 +20,7 @@
   height: 32rem;
   background: radial-gradient(
     ellipse 60% 60% at 50% 0%,
-    color-mix(in oklab, var(--primary) 35%, transparent),
+    color-mix(in oklab, var(--primary) 45%, transparent),
     transparent 70%
   );
   filter: blur(40px);
@@ -75,14 +50,21 @@
 }
 
 .landing-hero__title span {
-  color: var(--primary);
+  background: linear-gradient(
+    90deg,
+    var(--primary),
+    color-mix(in oklab, var(--primary) 50%, #38bdf8)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .landing-hero__subtitle {
   font-size: 1.05rem;
   line-height: 1.6;
   color: var(--muted-foreground);
-  max-width: 34rem;
+  max-width: 37rem;
   margin: 0 auto 2rem;
 }
 
@@ -94,6 +76,9 @@
   flex-wrap: wrap;
 }
 
+/* ============================================================
+   Seções
+   ============================================================ */
 .landing-section {
   padding: 4rem 1.5rem;
   max-width: 72rem;
@@ -110,7 +95,7 @@
 
 .landing-section__eyebrow {
   color: var(--primary);
-  font-size: 0.8rem;
+  font-size: 1.6rem;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
@@ -129,6 +114,9 @@
   line-height: 1.6;
 }
 
+/* ============================================================
+   Features
+   ============================================================ */
 .landing-features {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
@@ -143,12 +131,14 @@
   border-radius: var(--radius-lg);
   border: 1px solid var(--border);
   background: var(--card);
-  transition: border-color 0.2s ease, transform 0.2s ease;
+  backdrop-filter: blur(6px);
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .landing-feature-card:hover {
-  border-color: color-mix(in oklab, var(--primary) 50%, var(--border));
+  border-color: color-mix(in oklab, var(--primary) 60%, var(--border));
   transform: translateY(-2px);
+  box-shadow: var(--sombra-destaque);
 }
 
 .landing-feature-card__icon {
@@ -158,7 +148,7 @@
   width: 2.5rem;
   height: 2.5rem;
   border-radius: var(--radius-md);
-  background: color-mix(in oklab, var(--primary) 18%, transparent);
+  background: color-mix(in oklab, var(--primary) 20%, transparent);
   color: var(--primary);
 }
 
@@ -173,6 +163,15 @@
   line-height: 1.5;
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .landing-feature-card {
+    transition: none;
+  }
+}
+
+/* ============================================================
+   Benefícios
+   ============================================================ */
 .landing-benefits {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
@@ -204,6 +203,9 @@
   line-height: 1.5;
 }
 
+/* ============================================================
+   CTA
+   ============================================================ */
 .landing-cta {
   position: relative;
   overflow: hidden;
@@ -215,9 +217,10 @@
   border: 1px solid var(--border);
   background: linear-gradient(
     135deg,
-    color-mix(in oklab, var(--primary) 20%, var(--card)),
+    color-mix(in oklab, var(--primary) 30%, var(--card)),
     var(--card)
   );
+  box-shadow: var(--sombra-destaque);
 }
 
 .landing-cta__title {
@@ -230,12 +233,4 @@
 .landing-cta__description {
   color: var(--muted-foreground);
   margin-bottom: 1.5rem;
-}
-
-.landing-footer {
-  border-top: 1px solid var(--border);
-  padding: 1.5rem;
-  text-align: center;
-  color: var(--muted-foreground);
-  font-size: 0.85rem;
 }

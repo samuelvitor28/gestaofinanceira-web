@@ -1,0 +1,175 @@
+/* ============================================================
+   Paleta azul global: modo claro
+   ============================================================ */
+:root,
+:root[data-tema="claro"] {
+  --background: #eaf2ff;
+  --foreground: #0a1a44;
+  --card: #ffffffcc;
+  --card-foreground: #0a1a44;
+  --popover: #ffffff;
+  --popover-foreground: #0a1a44;
+  --primary: #1d4ed8;
+  --primary-foreground: #ffffff;
+  --secondary: #dbe8ff;
+  --secondary-foreground: #0a1a44;
+  --muted: #dbe8ff;
+  --muted-foreground: #3d5488;
+  --accent: #cfe0ff;
+  --accent-foreground: #0a1a44;
+  --border: #b9cff8;
+  --input: #b9cff8;
+  --ring: #1d4ed8;
+
+  --malha-a: rgba(37, 99, 235, 0.35);
+  --malha-b: rgba(56, 189, 248, 0.32);
+  --malha-c: rgba(99, 102, 241, 0.28);
+  --grade: rgba(29, 78, 216, 0.12);
+  --sombra-destaque: 0 10px 30px -12px rgba(29, 78, 216, 0.35);
+}
+
+/* ============================================================
+   Paleta azul global: modo escuro (azul-marinho profundo)
+   ============================================================ */
+:root[data-tema="escuro"] {
+  --background: #040b1f;
+  --foreground: #e6eeff;
+  --card: #0a1a3dcc;
+  --card-foreground: #e6eeff;
+  --popover: #0a1a3d;
+  --popover-foreground: #e6eeff;
+  --primary: #4f8ff7;
+  --primary-foreground: #04102e;
+  --secondary: #0f2451;
+  --secondary-foreground: #e6eeff;
+  --muted: #0f2451;
+  --muted-foreground: #9db4e6;
+  --accent: #13306b;
+  --accent-foreground: #e6eeff;
+  --border: #1c3a7a;
+  --input: #1c3a7a;
+  --ring: #4f8ff7;
+
+  --malha-a: rgba(37, 99, 235, 0.55);
+  --malha-b: rgba(14, 165, 233, 0.4);
+  --malha-c: rgba(79, 70, 229, 0.45);
+  --grade: rgba(96, 165, 250, 0.1);
+  --sombra-destaque: 0 10px 40px -12px rgba(59, 130, 246, 0.45);
+}
+
+/* ============================================================
+   Fundo global: malha de gradientes animada + grade
+   ============================================================ */
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  background:
+    radial-gradient(40rem 32rem at 12% 8%, var(--malha-a), transparent 60%),
+    radial-gradient(36rem 30rem at 88% 18%, var(--malha-b), transparent 60%),
+    radial-gradient(44rem 34rem at 70% 92%, var(--malha-c), transparent 60%),
+    radial-gradient(34rem 28rem at 6% 80%, var(--malha-b), transparent 60%);
+  background-size: 140% 140%;
+  animation: malha-animada 18s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background-image:
+    linear-gradient(var(--grade) 1px, transparent 1px),
+    linear-gradient(90deg, var(--grade) 1px, transparent 1px);
+  background-size: 3rem 3rem;
+  mask-image: radial-gradient(ellipse 80% 70% at 50% 30%, #000 30%, transparent 100%);
+  -webkit-mask-image: radial-gradient(
+    ellipse 80% 70% at 50% 30%,
+    #000 30%,
+    transparent 100%
+  );
+  pointer-events: none;
+}
+
+@keyframes malha-animada {
+  0% {
+    background-position: 0% 0%;
+    transform: scale(1);
+  }
+  100% {
+    background-position: 100% 100%;
+    transform: scale(1.08);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body::before {
+    animation: none;
+  }
+}
+
+/* ============================================================
+   Layout base das telas
+   ============================================================ */
+.layout-publico {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+.layout-publico__conteudo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+/* ============================================================
+   Cabeçalho (navbar)
+   ============================================================ */
+.cabecalho {
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in oklab, var(--background) 70%, transparent);
+  backdrop-filter: blur(12px);
+}
+
+.cabecalho__marca {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: var(--foreground);
+  text-decoration: none;
+}
+
+.cabecalho__acoes {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* ============================================================
+   Rodapé
+   ============================================================ */
+.rodape {
+  border-top: 1px solid var(--border);
+  padding: 1.5rem;
+  text-align: center;
+  color: var(--muted-foreground);
+  font-size: 0.85rem;
+  background: color-mix(in oklab, var(--background) 70%, transparent);
+  backdrop-filter: blur(8px);
+}

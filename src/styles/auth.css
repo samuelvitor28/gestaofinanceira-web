@@ -7,6 +7,21 @@
 }
 
 /* ============================================================
+   LOGO
+   ============================================================ */
+
+.auth-logo{
+    display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.auth-logo h2{
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+/* ============================================================
    Cartão dividido: painel azul + formulário
    ============================================================ */
 .auth-cartao {
@@ -20,6 +35,11 @@
   background: var(--card);
   backdrop-filter: blur(10px);
   animation: card-pulse 2s ease-in-out infinite;
+}
+
+.auth-cartao--largo {
+  max-width: 62rem;
+  grid-template-columns: 1fr 1.4fr;
 }
 
 /* ============================================================
@@ -81,6 +101,7 @@
 /* ============================================================
    Formulário
    ============================================================ */
+   
 .auth-formulario {
   display: flex;
   flex-direction: column;
@@ -107,10 +128,21 @@
   gap: 1.1rem;
 }
 
+.auth-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
 .auth-field {
   display: flex;
   flex-direction: column;
   gap: 0.4rem;
+}
+
+.auth-field-hint {
+  font-size: 0.75rem;
+  color: var(--destructive);
 }
 
 .auth-footer-text {
@@ -149,9 +181,10 @@
    Responsivo: painel vira faixa no topo
    ============================================================ */
 @media (max-width: 48rem) {
-  .auth-cartao {
+  .auth-cartao,
+  .auth-cartao--largo {
     grid-template-columns: 1fr;
-    max-width: 26rem;
+    max-width: 28rem;
   }
 
   .auth-painel {
@@ -166,3 +199,10 @@
     padding: 2rem 1.75rem;
   }
 }
+
+@media (max-width: 30rem) {
+  .auth-form-row {
+    grid-template-columns: 1fr;
+  }
+}
+

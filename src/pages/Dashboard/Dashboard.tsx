@@ -174,8 +174,7 @@ export function Dashboard() {
               <div className="dashboard-evolution-placeholder">
                 <TrendingUp className="size-6" aria-hidden />
                 <span>
-                  Gráfico de evolução em breve. Para implementar, sugiro a
-                  biblioteca Recharts — aviso antes de instalar.
+                  Gráfico de evolução em breve.
                 </span>
               </div>
             </CardContent>

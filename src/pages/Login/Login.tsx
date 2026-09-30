@@ -4,7 +4,6 @@ import { AlertCircle, Loader2, Wallet } from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import "./Login.css"
@@ -34,62 +33,69 @@ export function Login() {
 
   return (
     <div className="auth-page">
-      <div className="auth-page__glow" aria-hidden />
-      <div className="auth-card-wrapper">
-        <div className="auth-header">
-          <Wallet className="size-5" aria-hidden />
-          <span>Gestão Financeira</span>
+      <div className="auth-cartao">
+        <aside className="auth-painel">
+          <div className="auth-logo">
+            <Wallet className="auth-painel__icone" aria-hidden />
+            <h2>Gestão Financeira</h2>
+          </div>   
+          <h2 className="auth-painel__titulo">Bem-vindo de volta!</h2>
+          <p className="auth-painel__texto">
+            Estamos felizes em te ver aqui novamente!
+          </p>
+        </aside>
+
+        <div className="auth-formulario">
+          <div className="auth-formulario__cabecalho">
+            <h1 className="auth-formulario__titulo">Entrar</h1>
+            <p className="auth-formulario__subtitulo">
+              Acesse sua conta com seu usuário e senha.
+            </p>
+          </div>
+
+          <form className="auth-form" onSubmit={handleSubmit} noValidate>
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="size-4" aria-hidden />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="auth-field">
+              <Label htmlFor="username">Usuário</Label>
+              <Input
+                id="username"
+                name="username"
+                autoComplete="username"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+                required
+              />
+            </div>
+
+            <div className="auth-field">
+              <Label htmlFor="senha">Senha</Label>
+              <Input
+                id="senha"
+                name="senha"
+                type="password"
+                autoComplete="current-password"
+                value={senha}
+                onChange={(event) => setSenha(event.target.value)}
+                required
+              />
+            </div>
+
+            <Button type="submit" disabled={isLoading}>
+              {isLoading && <Loader2 className="size-4 animate-spin" aria-hidden />}
+              {isLoading ? "Entrando..." : "Entrar"}
+            </Button>
+          </form>
+
+          <p className="auth-footer-text">
+            Ainda não tem uma conta? <Link to="/cadastro">Cadastre-se</Link>
+          </p>
         </div>
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Entrar</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="auth-form" onSubmit={handleSubmit} noValidate>
-              {error && (
-                <Alert variant="destructive">
-                  <AlertCircle className="size-4" aria-hidden />
-                  <AlertDescription>{error}</AlertDescription>
-                </Alert>
-              )}
-
-              <div className="auth-field">
-                <Label htmlFor="username">Usuário</Label>
-                <Input
-                  id="username"
-                  name="username"
-                  autoComplete="username"
-                  value={username}
-                  onChange={(event) => setUsername(event.target.value)}
-                  required
-                />
-              </div>
-
-              <div className="auth-field">
-                <Label htmlFor="senha">Senha</Label>
-                <Input
-                  id="senha"
-                  name="senha"
-                  type="password"
-                  autoComplete="current-password"
-                  value={senha}
-                  onChange={(event) => setSenha(event.target.value)}
-                  required
-                />
-              </div>
-
-              <Button type="submit" disabled={isLoading}>
-                {isLoading && <Loader2 className="size-4 animate-spin" aria-hidden />}
-                {isLoading ? "Entrando..." : "Entrar"}
-              </Button>
-            </form>
-          </CardContent>
-        </Card>
-
-        <p className="auth-footer-text">
-          Ainda não tem uma conta? <Link to="/cadastro">Cadastre-se</Link>
-        </p>
       </div>
     </div>
   )
