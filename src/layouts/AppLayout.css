@@ -57,7 +57,14 @@
 }
 
 .app-content__header {
-  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-content__titulos {
+  min-width: 0;
 }
 
 .app-content__title {
@@ -93,4 +100,10 @@
   .app-content {
     padding: 1.25rem;
   }
+}
+
+.app-sidebar__rodape {
+  margin-top: auto;
+  padding-top: 0.75rem;
+  border-top: 1px solid rgb(255 255 255 / 0.1);
 }

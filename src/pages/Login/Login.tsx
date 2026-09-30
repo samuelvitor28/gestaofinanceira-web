@@ -41,7 +41,7 @@ export function Login() {
           </div>   
           <h2 className="auth-painel__titulo">Bem-vindo de volta!</h2>
           <p className="auth-painel__texto">
-            Estamos felizes em te ver aqui novamente!
+            Estamos felizes em te ver aqui novamente.
           </p>
         </aside>
 

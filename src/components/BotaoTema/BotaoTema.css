@@ -1,0 +1,17 @@
+.botao-tema {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: inherit;
+  background: rgb(59 130 246 / 0.18);
+  border: 1px solid rgb(59 130 246 / 0.4);
+  transition: background-color 0.15s ease;
+}
+
+.botao-tema:hover {
+  background: rgb(59 130 246 / 0.3);
+}

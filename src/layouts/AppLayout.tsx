@@ -1,7 +1,9 @@
 import type { ReactNode } from "react"
 import { Link, useLocation } from "react-router-dom"
-import { LayoutDashboard, ListTree, Tags, Wallet } from "lucide-react"
+import { LayoutDashboard, ListTree, Wallet } from "lucide-react"
 
+import { BotaoTema } from "@/components/BotaoTema/BotaoTema"
+import { PerfilUsuario } from "@/components/PerfilUsuario/PerfilUsuario"
 import { cn } from "@/lib/utils"
 import "./AppLayout.css"
 
@@ -9,7 +11,6 @@ const navItems = [
   { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { to: "/transacoes", label: "Transações", icon: ListTree },
   { to: "/contas", label: "Contas", icon: Wallet },
-  { to: "/categorias", label: "Categorias", icon: Tags },
 ]
 
 interface AppLayoutProps {
@@ -46,12 +47,19 @@ export function AppLayout({ title, subtitle, children }: AppLayoutProps) {
             )
           })}
         </nav>
+
+        <div className="app-sidebar__rodape">
+          <PerfilUsuario />
+        </div>
       </aside>
 
       <div className="app-content">
         <header className="app-content__header">
-          <h1 className="app-content__title">{title}</h1>
-          {subtitle && <p className="app-content__subtitle">{subtitle}</p>}
+          <div className="app-content__titulos">
+            <h1 className="app-content__title">{title}</h1>
+            {subtitle && <p className="app-content__subtitle">{subtitle}</p>}
+          </div>
+          <BotaoTema />
         </header>
         {children}
       </div>
