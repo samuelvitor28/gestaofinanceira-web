@@ -1,4 +1,4 @@
-import { ChevronsUpDown, LogOut, Mail, Phone, User, UserRound } from "lucide-react"
+import { ChevronsUpDown, LogOut, UserRound } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
