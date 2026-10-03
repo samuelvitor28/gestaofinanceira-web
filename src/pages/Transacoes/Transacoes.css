@@ -43,3 +43,9 @@
   color: var(--muted-foreground);
   text-align: center;
 }
+
+.transacoes-modal-header {
+  padding-bottom: 1rem;
+  margin-bottom: 0.5rem 1px solid blue;
+  border-bottom: 1px solid var(--border);
+}
