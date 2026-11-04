@@ -4,6 +4,7 @@ import { Plus } from "lucide-react"
 import { FiltrosTransacoes } from "@/components/Transacoes/FiltrosTransacoes"
 import { NovaTransacaoDialog } from "@/components/Transacoes/NovaTransacaoDialog"
 import { TabelaTransacoes } from "@/components/Transacoes/TabelaTransacoes"
+import { showToast } from "@/components/Toast/Toast"
 import { Button } from "@/components/ui/button"
 import { AppLayout } from "@/layouts/AppLayout"
 import { aplicarFiltros, criarFiltrosVazios } from "@/lib/transacoes"
@@ -13,6 +14,9 @@ import type {
   NovaTransacaoPayload,
   Transacao,
 } from "@/types/transacao"
+
+// Itens por página (valor baixo para testar com poucos dados mockados)
+const PAGE_SIZE = 10
 
 // TODO: substituir por dados vindos de services/transacaoService.ts.
 const transacoesMock: Transacao[] = [
@@ -57,6 +61,7 @@ export function Transacoes() {
   const [transacoes, setTransacoes] = useState<Transacao[]>(transacoesMock)
   const [filtros, setFiltros] = useState<FiltrosTransacao>(criarFiltrosVazios())
   const [dialogAberto, setDialogAberto] = useState(false)
+  const [page, setPage] = useState(1)
 
   const valorMaximo = useMemo(
     () => Math.ceil(Math.max(0, ...transacoes.map((item) => item.valor))),
@@ -73,9 +78,40 @@ export function Transacoes() {
     [transacoes, filtros]
   )
 
+  // Paginação
+  const totalPages = Math.max(1, Math.ceil(transacoesFiltradas.length / PAGE_SIZE))
+  const currentPage = Math.min(page, totalPages) // evita página inválida após excluir/filtrar
+  const paginatedTransactions = transacoesFiltradas.slice(
+    (currentPage - 1) * PAGE_SIZE,
+    currentPage * PAGE_SIZE
+  )
+
+  // Ao mudar os filtros, volta para a primeira página
+  function handleFiltersChange(novosFiltros: FiltrosTransacao) {
+    setFiltros(novosFiltros)
+    setPage(1)
+  }
+
   async function lidarComCriacao(payload: NovaTransacaoPayload) {
-    const criada = await criarTransacaoNaApi(payload)
-    setTransacoes((anteriores) => [criada, ...anteriores])
+    try {
+      const criada = await criarTransacaoNaApi(payload)
+      setTransacoes((anteriores) => [criada, ...anteriores])
+      showToast.success("Transação criada", "A transação foi salva com sucesso.")
+    } catch {
+      showToast.error("Erro ao salvar", "Não foi possível salvar a transação.")
+    }
+  }
+
+  function handleDelete(id: string) {
+    try {
+      // TODO: quando a API existir, trocar por: await api.delete(`/transacoes/${id}`)
+      setTransacoes((anteriores) =>
+        anteriores.filter((transacao) => transacao.id !== id)
+      )
+      showToast.success("Transação excluída", "A transação foi removida com sucesso.")
+    } catch {
+      showToast.error("Erro ao excluir", "Não foi possível excluir a transação.")
+    }
   }
 
   return (
@@ -90,15 +126,19 @@ export function Transacoes() {
 
         <FiltrosTransacoes
           filtros={filtros}
-          aoMudar={setFiltros}
+          aoMudar={handleFiltersChange}
           categorias={categoriasMock}
           contas={contasMock}
           valorMaximo={valorMaximo}
         />
 
         <TabelaTransacoes
-          transacoes={transacoesFiltradas}
+          transacoes={paginatedTransactions}
           nomesContas={nomesContas}
+          page={currentPage}
+          totalPages={totalPages}
+          onPageChange={setPage}
+          onDelete={handleDelete}
         />
       </div>
 

@@ -2,6 +2,8 @@ import { type FormEvent, useState } from "react"
 import { Loader2, Plus, Trash2, Wallet } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
+import { BotaoSalvar } from "../../components/BotaoSalvar/BotaoSalvar"
+import { BotaoCancelar } from "../../components/BotaoCancelar/BotaoCancelar"
 import {
   Dialog,
   DialogContent,

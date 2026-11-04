@@ -1,7 +1,11 @@
 import { useState } from "react"
-import { Loader2 } from "lucide-react"
+import { Loader2,
+Save
+ } from "lucide-react"
 
-import { Button } from "@/components/ui/button"
+import { BotaoSalvar } from "../BotaoSalvar/BotaoSalvar"
+import { BotaoCancelar } from "../BotaoCancelar/BotaoCancelar"
+
 import {
   Dialog,
   DialogContent,
@@ -309,19 +313,14 @@ function FormularioTransacao({
       </div>
 
       <DialogFooter>
-        <Button type="button" variant="outline" onClick={aoCancelar} disabled={salvando}>
-          Cancelar
-        </Button>
-        <Button type="button" onClick={lidarComSalvar} disabled={salvando}>
-          {salvando ? (
-            <>
-              <Loader2 className="size-4 animate-spin" aria-hidden />
-              Salvando...
-            </>
-          ) : (
-            "Salvar"
-          )}
-        </Button>
+        <BotaoCancelar
+          onClick={aoCancelar}
+        />
+
+        <BotaoSalvar
+          onClick={lidarComSalvar}
+          salvando={salvando}
+        />
       </DialogFooter>
     </>
   )

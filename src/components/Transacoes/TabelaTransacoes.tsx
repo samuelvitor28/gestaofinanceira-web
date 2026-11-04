@@ -14,26 +14,29 @@ import { cn } from "@/lib/utils"
 import type { Transacao } from "@/types/transacao"
 
 import { CategoriaBadge } from "./CategoriaBadge"
+import { BotaoDeletar } from "../BotaoDeletar/BotaoDeletar"
+import { Paginacao } from "../Paginacao/Paginacao"
 
 interface TabelaTransacoesProps {
-  transacoes: Transacao[]
+  transacoes: Transacao[] // apenas as transações da página atual
   nomesContas: Record<string, string> // id da conta -> nome
+  page: number
+  totalPages: number
+  onPageChange: (page: number) => void
+  onDelete: (id: string) => void
 }
 
 export function TabelaTransacoes({
   transacoes,
   nomesContas,
+  page,
+  totalPages,
+  onPageChange,
+  onDelete,
 }: TabelaTransacoesProps) {
   return (
     <Card className="overflow-hidden py-0">
       <CardContent className="p-0">
-        <div className="flex items-center justify-between border-b px-6 py-3 text-sm text-muted-foreground">
-          <span>
-            {transacoes.length}{" "}
-            {transacoes.length === 1 ? "transação encontrada" : "transações encontradas"}
-          </span>
-        </div>
-
         {transacoes.length === 0 ? (
           <div className="px-4 py-16 text-center text-muted-foreground">
             Nenhuma transação encontrada.
@@ -46,7 +49,10 @@ export function TabelaTransacoes({
                 <TableHead>Categoria</TableHead>
                 <TableHead>Conta</TableHead>
                 <TableHead>Data</TableHead>
-                <TableHead className="pr-6 text-right">Valor</TableHead>
+                <TableHead className="text-right">Valor</TableHead>
+                <TableHead className="w-16 pr-6 text-right">
+                  <span className="sr-only">Ações</span>
+                </TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -68,7 +74,7 @@ export function TabelaTransacoes({
                     <TableCell className="tabular-nums text-muted-foreground">
                       {formatarDataIso(transacao.data)}
                     </TableCell>
-                    <TableCell className="pr-6 text-right">
+                    <TableCell className="text-right">
                       <span
                         className={cn(
                           "inline-flex items-center justify-end gap-1.5 font-semibold tabular-nums",
@@ -81,11 +87,27 @@ export function TabelaTransacoes({
                         {ehReceita ? "+" : "-"} {formatarMoeda(transacao.valor)}
                       </span>
                     </TableCell>
+                    <TableCell className="pr-6 text-right">
+                      <BotaoDeletar
+                        description={transacao.descricao}
+                        onConfirm={() => onDelete(transacao.id)}
+                      />
+                    </TableCell>
                   </TableRow>
                 )
               })}
             </TableBody>
           </Table>
+        )}
+
+        {totalPages > 1 && (
+          <div className="border-t px-6 py-3">
+            <Paginacao
+              page={page}
+              totalPages={totalPages}
+              onPageChange={onPageChange}
+            />
+          </div>
         )}
       </CardContent>
     </Card>
