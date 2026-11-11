@@ -1,9 +1,8 @@
-import { type FormEvent, useState } from "react"
+import { type FormEvent, useEffect, useState } from "react"
 import { Loader2, Plus, Trash2, Wallet } from "lucide-react"
 
+import { showToast } from "@/components/Toast/Toast"
 import { Button } from "@/components/ui/button"
-import { BotaoSalvar } from "../../components/BotaoSalvar/BotaoSalvar"
-import { BotaoCancelar } from "../../components/BotaoCancelar/BotaoCancelar"
 import {
   Dialog,
   DialogContent,
@@ -15,55 +14,45 @@ import {
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { AppLayout } from "@/layouts/AppLayout"
+import { contaService, type Conta } from "@/services/contaService"
+import { usuarioService } from "@/services/usuarioService"
 import "./Contas.css"
-
-// Uma "Conta" aqui é apenas uma origem financeira usada para organizar
-// transações (ex: Nubank, Carteira) — nunca dados sensíveis como número de
-// cartão, CVV, agência ou senha bancária.
-interface Conta {
-  id: string
-  nome: string
-  usuarioId: string
-}
-
-interface NovaContaPayload {
-  nome: string
-  usuarioId: string
-}
-
-// TODO: substituir pelo id do usuário logado (ex.: useAuth().usuario.id).
-// Idealmente o backend também deve obter o usuário pelo token e ignorar
-// o usuarioId vindo do cliente.
-const USUARIO_ID_MOCK = "1"
 
 const NOME_MAX = 50
 
-const contasIniciais: Conta[] = [
-  { id: "1", nome: "Nubank", usuarioId: USUARIO_ID_MOCK },
-  { id: "2", nome: "Banco do Brasil", usuarioId: USUARIO_ID_MOCK },
-  { id: "3", nome: "Carteira", usuarioId: USUARIO_ID_MOCK },
-]
-
-// TODO: trocar por chamada real, ex.: contaService.criar(payload) (POST /contas).
-function criarContaNaApi(payload: NovaContaPayload): Promise<Conta> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        id: crypto.randomUUID(),
-        nome: payload.nome,
-        usuarioId: payload.usuarioId,
-      })
-    }, 1000)
-  })
-}
-
 export function Contas() {
-  const [contas, setContas] = useState<Conta[]>(contasIniciais)
+  const [contas, setContas] = useState<Conta[]>([])
+  const [carregando, setCarregando] = useState(true)
+  const [usuarioId, setUsuarioId] = useState<string>("")
 
   const [modalAberto, setModalAberto] = useState(false)
   const [salvando, setSalvando] = useState(false)
   const [nome, setNome] = useState("")
   const [erroNome, setErroNome] = useState("")
+
+  useEffect(() => {
+    async function carregarContas() {
+      setCarregando(true)
+      try {
+        const usuario = await usuarioService.obterUsuarioAtivo()
+        if (usuario?.id) {
+          setUsuarioId(usuario.id)
+          const lista = await contaService.listarPorUsuario(usuario.id)
+          setContas(lista)
+        } else {
+          const lista = await contaService.listarTodas()
+          setContas(lista)
+        }
+      } catch (erro) {
+        console.error("Erro ao carregar contas", erro)
+        showToast.error("Erro ao carregar", "Não foi possível carregar suas contas.")
+      } finally {
+        setCarregando(false)
+      }
+    }
+
+    carregarContas()
+  }, [])
 
   function limparFormulario() {
     setNome("")
@@ -107,26 +96,44 @@ export function Contas() {
     if (salvando) return
     if (!validarFormulario()) return
 
+    if (!usuarioId) {
+      showToast.error(
+        "Usuário não identificado",
+        "Cadastre ou entre com um usuário antes de criar uma conta."
+      )
+      return
+    }
+
     setSalvando(true)
     try {
-      const novaConta = await criarContaNaApi({
+      const novaConta = await contaService.criar({
         nome: nome.trim(),
-        usuarioId: USUARIO_ID_MOCK,
+        usuarioId,
       })
       setContas((anteriores) => [...anteriores, novaConta])
       setModalAberto(false)
       limparFormulario()
+      showToast.success("Conta criada", "A conta foi cadastrada com sucesso.")
     } catch (erro) {
-      // TODO: exibir feedback de erro (toast) quando a API estiver integrada.
       console.error("Erro ao salvar conta", erro)
+      showToast.error("Erro ao salvar", "Não foi possível criar a conta.")
     } finally {
       setSalvando(false)
     }
   }
 
-  function handleRemover(id: string) {
-    // TODO: substituir por chamada a services/contaService.ts (DELETE /contas/:id).
-    setContas((anteriores) => anteriores.filter((conta) => conta.id !== id))
+  async function handleRemover(id: string) {
+    try {
+      await contaService.deletar(id)
+      setContas((anteriores) => anteriores.filter((conta) => conta.id !== id))
+      showToast.success("Conta excluída", "A conta foi removida com sucesso.")
+    } catch (erro) {
+      console.error("Erro ao remover conta", erro)
+      showToast.error(
+        "Erro ao excluir",
+        "Não foi possível remover a conta (verifique se há transações vinculadas)."
+      )
+    }
   }
 
   return (
@@ -138,7 +145,9 @@ export function Contas() {
         </Button>
       </div>
 
-      {contas.length === 0 ? (
+      {carregando ? (
+        <p className="contas-empty">Carregando contas...</p>
+      ) : contas.length === 0 ? (
         <p className="contas-empty">Nenhuma conta cadastrada ainda.</p>
       ) : (
         <div className="contas-grid">

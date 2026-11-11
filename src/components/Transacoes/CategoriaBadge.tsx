@@ -5,9 +5,11 @@ import {
   HeartPulse,
   Home,
   PiggyBank,
+  ShoppingBag,
   Tag,
   UtensilsCrossed,
   Wallet,
+  Wrench,
   type LucideIcon,
 } from "lucide-react"
 
@@ -42,6 +44,14 @@ const ESTILOS_CATEGORIA: Record<string, EstiloCategoria> = {
   Lazer: {
     icone: Gamepad2,
     classe: "bg-fuchsia-100 text-fuchsia-700 dark:bg-fuchsia-500/15 dark:text-fuchsia-300",
+  },
+  Compras: {
+    icone: ShoppingBag,
+    classe: "bg-pink-100 text-pink-700 dark:bg-pink-500/15 dark:text-pink-300",
+  },
+  Serviços: {
+    icone: Wrench,
+    classe: "bg-cyan-100 text-cyan-700 dark:bg-cyan-500/15 dark:text-cyan-300",
   },
   Salário: {
     icone: Wallet,

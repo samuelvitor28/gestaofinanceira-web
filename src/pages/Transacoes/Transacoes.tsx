@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { Plus } from "lucide-react"
 
 import { FiltrosTransacoes } from "@/components/Transacoes/FiltrosTransacoes"
@@ -8,6 +8,12 @@ import { showToast } from "@/components/Toast/Toast"
 import { Button } from "@/components/ui/button"
 import { AppLayout } from "@/layouts/AppLayout"
 import { aplicarFiltros, criarFiltrosVazios } from "@/lib/transacoes"
+import { contaService } from "@/services/contaService"
+import {
+  CATEGORIAS_DISPONIVEIS,
+  transacaoService,
+} from "@/services/transacaoService"
+import { usuarioService } from "@/services/usuarioService"
 import type {
   Conta,
   FiltrosTransacao,
@@ -15,53 +21,49 @@ import type {
   Transacao,
 } from "@/types/transacao"
 
-// Itens por página (valor baixo para testar com poucos dados mockados)
+// Itens por página
 const PAGE_SIZE = 10
 
-// TODO: substituir por dados vindos de services/transacaoService.ts.
-const transacoesMock: Transacao[] = [
-  { id: "1", descricao: "Salário", categoria: "Salário", contaId: "1", data: "2026-09-05", valor: 5200, tipo: "receita" },
-  { id: "2", descricao: "Supermercado", categoria: "Alimentação", contaId: "2", data: "2026-09-08", valor: 412.3, tipo: "despesa" },
-  { id: "3", descricao: "Uber", categoria: "Transporte", contaId: "2", data: "2026-09-10", valor: 58.9, tipo: "despesa" },
-  { id: "4", descricao: "Freelance", categoria: "Investimentos", contaId: "3", data: "2026-09-12", valor: 900, tipo: "receita" },
-  { id: "5", descricao: "Aluguel", categoria: "Moradia", contaId: "4", data: "2026-09-15", valor: 1200, tipo: "despesa" },
-]
-
-// TODO: substituir por categorias vindas da API (ex.: categoriaService.listar()).
-const categoriasMock = [
-  "Alimentação",
-  "Transporte",
-  "Moradia",
-  "Saúde",
-  "Educação",
-  "Lazer",
-  "Salário",
-  "Investimentos",
-  "Outros",
-]
-
-// TODO: substituir pelas contas do usuário logado (ex.: contaService.listarDoUsuario()).
-const contasMock: Conta[] = [
-  { id: "1", nome: "Conta salário" },
-  { id: "2", nome: "Nubank" },
-  { id: "3", nome: "Inter" },
-  { id: "4", nome: "Banco do Brasil" },
-]
-
-// TODO: trocar por chamada real, ex.: transacaoService.criar(payload).
-function criarTransacaoNaApi(payload: NovaTransacaoPayload): Promise<Transacao> {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({ id: crypto.randomUUID(), ...payload })
-    }, 1200)
-  })
-}
-
 export function Transacoes() {
-  const [transacoes, setTransacoes] = useState<Transacao[]>(transacoesMock)
+  const [transacoes, setTransacoes] = useState<Transacao[]>([])
+  const [contas, setContas] = useState<Conta[]>([])
   const [filtros, setFiltros] = useState<FiltrosTransacao>(criarFiltrosVazios())
   const [dialogAberto, setDialogAberto] = useState(false)
   const [page, setPage] = useState(1)
+
+  useEffect(() => {
+    async function carregarDados() {
+      try {
+        const usuario = await usuarioService.obterUsuarioAtivo()
+        let contasCarregadas: Conta[] = []
+
+        if (usuario?.id) {
+          contasCarregadas = await contaService.listarPorUsuario(usuario.id)
+        } else {
+          contasCarregadas = await contaService.listarTodas()
+        }
+        setContas(contasCarregadas)
+
+        if (usuario?.id) {
+          const transacoesDoUsuario = await transacaoService.listarPorContas(
+            contasCarregadas.map((c) => c.id)
+          )
+          setTransacoes(transacoesDoUsuario)
+        } else {
+          const todasTransacoes = await transacaoService.listarTodas()
+          setTransacoes(todasTransacoes)
+        }
+      } catch (erro) {
+        console.error("Erro ao carregar transações", erro)
+        showToast.error(
+          "Erro ao carregar",
+          "Não foi possível carregar as transações da API."
+        )
+      }
+    }
+
+    carregarDados()
+  }, [])
 
   const valorMaximo = useMemo(
     () => Math.ceil(Math.max(0, ...transacoes.map((item) => item.valor))),
@@ -69,8 +71,8 @@ export function Transacoes() {
   )
 
   const nomesContas = useMemo(
-    () => Object.fromEntries(contasMock.map((conta) => [conta.id, conta.nome])),
-    []
+    () => Object.fromEntries(contas.map((conta) => [conta.id, conta.nome])),
+    [contas]
   )
 
   const transacoesFiltradas = useMemo(
@@ -94,17 +96,18 @@ export function Transacoes() {
 
   async function lidarComCriacao(payload: NovaTransacaoPayload) {
     try {
-      const criada = await criarTransacaoNaApi(payload)
+      const criada = await transacaoService.criar(payload)
       setTransacoes((anteriores) => [criada, ...anteriores])
       showToast.success("Transação criada", "A transação foi salva com sucesso.")
-    } catch {
+    } catch (erro) {
       showToast.error("Erro ao salvar", "Não foi possível salvar a transação.")
+      throw erro
     }
   }
 
-  function handleDelete(id: string) {
+  async function handleDelete(id: string) {
     try {
-      // TODO: quando a API existir, trocar por: await api.delete(`/transacoes/${id}`)
+      await transacaoService.deletar(id)
       setTransacoes((anteriores) =>
         anteriores.filter((transacao) => transacao.id !== id)
       )
@@ -127,8 +130,8 @@ export function Transacoes() {
         <FiltrosTransacoes
           filtros={filtros}
           aoMudar={handleFiltersChange}
-          categorias={categoriasMock}
-          contas={contasMock}
+          categorias={CATEGORIAS_DISPONIVEIS}
+          contas={contas}
           valorMaximo={valorMaximo}
         />
 
@@ -145,8 +148,8 @@ export function Transacoes() {
       <NovaTransacaoDialog
         aberto={dialogAberto}
         aoMudarAberto={setDialogAberto}
-        categorias={categoriasMock}
-        contas={contasMock}
+        categorias={CATEGORIAS_DISPONIVEIS}
+        contas={contas}
         aoCriar={lidarComCriacao}
       />
     </AppLayout>

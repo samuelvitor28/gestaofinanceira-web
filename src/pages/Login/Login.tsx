@@ -1,14 +1,16 @@
 import { type FormEvent, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { AlertCircle, Loader2, Wallet } from "lucide-react"
 
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { usuarioService } from "@/services/usuarioService"
 import "./Login.css"
 
 export function Login() {
+  const navegar = useNavigate()
   const [username, setUsername] = useState("")
   const [senha, setSenha] = useState("")
   const [isLoading, setIsLoading] = useState(false)
@@ -17,15 +19,19 @@ export function Login() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
     setError(null)
+
+    if (!username.trim()) {
+      setError("Informe seu usuário ou e-mail.")
+      return
+    }
+
     setIsLoading(true)
 
     try {
-      // TODO: integrar com o backend via services/authService.ts assim que o
-      // endpoint de autenticação estiver definido. Ex:
-      // await authService.login({ username, senha })
-      // e então redirecionar para /dashboard.
+      await usuarioService.loginProvisorio(username)
+      navegar("/dashboard")
     } catch {
-      setError("Não foi possível entrar. Verifique suas credenciais e tente novamente.")
+      setError("Não foi possível entrar. Verifique se o usuário está cadastrado.")
     } finally {
       setIsLoading(false)
     }

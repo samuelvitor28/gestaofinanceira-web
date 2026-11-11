@@ -1,11 +1,14 @@
 import { type FormEvent, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { AlertCircle, Loader2, Wallet } from "lucide-react"
 
+import { showToast } from "@/components/Toast/Toast"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { usuarioService } from "@/services/usuarioService"
+import { salvarUsuarioSessao } from "@/utils/usuario"
 
 interface CadastroForm {
   nome: string
@@ -26,6 +29,7 @@ const initialForm: CadastroForm = {
 }
 
 export function Cadastro() {
+  const navegar = useNavigate()
   const [form, setForm] = useState<CadastroForm>(initialForm)
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -45,12 +49,26 @@ export function Cadastro() {
 
     setIsLoading(true)
     try {
-      // TODO: integrar com o backend via services/authService.ts assim que o
-      // endpoint de cadastro estiver definido. Ex:
-      // await authService.cadastrar(form)
-      // e então redirecionar para /login ou autenticar direto.
-    } catch {
-      setError("Não foi possível concluir o cadastro. Tente novamente.")
+      const criado = await usuarioService.criar({
+        nome: form.nome.trim(),
+        username: form.username.trim(),
+        email: form.email.trim(),
+        senha: form.senha,
+      })
+
+      salvarUsuarioSessao({
+        ...criado,
+        telefone: form.telefone.trim() || undefined,
+      })
+
+      showToast.success("Conta criada", "Bem-vindo ao Gestão Financeira!")
+      navegar("/dashboard")
+    } catch (erro) {
+      const mensagem =
+        erro instanceof Error && erro.message
+          ? erro.message
+          : "Não foi possível concluir o cadastro. Tente novamente."
+      setError(mensagem)
     } finally {
       setIsLoading(false)
     }

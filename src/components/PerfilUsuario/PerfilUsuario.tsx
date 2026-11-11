@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react"
 import { ChevronsUpDown, LogOut, UserRound } from "lucide-react"
 import { useNavigate } from "react-router-dom"
 
@@ -11,15 +12,33 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { obterIniciais, usuarioMock } from "@/utils/usuario"
+import { usuarioService } from "@/services/usuarioService"
+import {
+  limparUsuarioSessao,
+  obterIniciais,
+  obterUsuarioSalvo,
+  usuarioMock,
+  type Usuario,
+} from "@/utils/usuario"
 import "./PerfilUsuario.css"
 
 export function PerfilUsuario() {
   const navegar = useNavigate()
-  const usuario = usuarioMock
+  const [usuario, setUsuario] = useState<Usuario>(
+    () => obterUsuarioSalvo() ?? usuarioMock
+  )
+
+  useEffect(() => {
+    usuarioService
+      .obterUsuarioAtivo()
+      .then((ativo) => {
+        if (ativo) setUsuario(ativo)
+      })
+      .catch(() => {})
+  }, [])
 
   function sair() {
-    // TODO: limpar token/sessão quando houver autenticação
+    limparUsuarioSessao()
     navegar("/login", { replace: true })
   }
 

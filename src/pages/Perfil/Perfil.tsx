@@ -1,12 +1,30 @@
+import { useEffect, useState } from "react"
 import { Mail, Phone, User } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { AppLayout } from "@/layouts/AppLayout"
-import { obterIniciais, usuarioMock } from "@/utils/usuario"
+import { usuarioService } from "@/services/usuarioService"
+import {
+  obterIniciais,
+  obterUsuarioSalvo,
+  usuarioMock,
+  type Usuario,
+} from "@/utils/usuario"
 import "./Perfil.css"
 
 export function Perfil() {
-  const usuario = usuarioMock
+  const [usuario, setUsuario] = useState<Usuario>(
+    () => obterUsuarioSalvo() ?? usuarioMock
+  )
+
+  useEffect(() => {
+    usuarioService
+      .obterUsuarioAtivo()
+      .then((ativo) => {
+        if (ativo) setUsuario(ativo)
+      })
+      .catch(() => {})
+  }, [])
 
   return (
     <AppLayout title="Meu perfil" subtitle="Seus dados pessoais">
